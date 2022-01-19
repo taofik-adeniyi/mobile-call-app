@@ -5,6 +5,7 @@ import CallScreen from '../screens/CallScreen';
 import ContactScreen from '../screens/Contacts';
 import CallingScreen from '../screens/CallingScreen';
 import IncomingCall from '../screens/IncomingCall';
+import LoginScreen from '../screens/LoginScreen';
 
 
 const Stack = createNativeStackNavigator()
@@ -12,7 +13,8 @@ const Stack = createNativeStackNavigator()
 const Navigation = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName={'Contacts'}>
+            <Stack.Navigator initialRouteName={'Login'}>
+                <Stack.Screen name="Login" component={LoginScreen} />
                 <Stack.Screen name="Contacts" component={ContactScreen} />
                 {/* <Stack.Screen name="CallingScreen" component={CallingScreen} options={{headerShown: false}} />
                 <Stack.Screen name="CallScreen" component={CallScreen} options={{headerShown: false}} />
