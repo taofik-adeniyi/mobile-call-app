@@ -1,23 +1,45 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {View, Text, StyleSheet, Image, ImageBackground, Pressable, Alert} from 'react-native';
 import wallbg from '../../../assets/images/incomingbg.jpeg';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Feather from 'react-native-vector-icons/Feather';
+import { useRoute, useNavigation } from '@react-navigation/native'
+import { Voximplant } from 'react-native-voximplant'
 
 const IncomingCall = () => {
+  const [caller, setCaller] = useState(null)
+    const route = useRoute()
+    const navigation = useNavigation()
+    const { call } = route.params
+
     const onAccept = () => {
         console.warn('accept')
-        Alert.alert('title', 'on accept press')
+        navigation.navigate("CallScreen", {
+          call: call,
+          isIncomingCall: true
+        })
+        // Alert.alert('title', 'on accept press')
     }
     const onDecline = () => {
         console.warn('decline')
+        call.decline()
     }
+
+    useEffect(() => {
+      setCaller(call.getEndpoints()[0].displayName)
+      call.on(Voximplant.CallEvents.Disconnected, callEvent => {
+        navigation.navigate('Contacts')
+      })
+      return () => {
+        call.off(Voximplant.CallEvents.Disconnected)
+      }
+    })
   return (
     <View style={styles.root}>
       {/* <Image source={wallbg} style={styles.bg} resizeMode="cover" /> */}
       <ImageBackground source={wallbg} style={styles.bg} resizeMode="cover">
-        <Text style={styles.name}>Abidemi</Text>
+        <Text style={styles.name}>{caller || 'Abidemi'}</Text>
         <Text style={styles.phoneNumber}>Video call ...</Text>
 
         <View style={[styles.row, {marginTop: 'auto'}]}>

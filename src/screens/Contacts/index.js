@@ -2,12 +2,27 @@ import React, { useState, useEffect } from 'react';
 import {Text, View, FlatList, StyleSheet, TextInput, Pressable} from 'react-native';
 import contactsData from '../../../assets/data/contacts.json';
 import { useNavigation } from '@react-navigation/core'
+// this should be moved into App.js files
+import { Voximplant } from 'react-native-voximplant'
 
 const ContactScreen = () => {
-    const [searchText, setSearchText] = useState('')
-    const [contacts, setContact] = useState(contactsData)
+  const [searchText, setSearchText] = useState('')
+  const [contacts, setContact] = useState(contactsData)
+  
+  const navigation = useNavigation()
+  const voximplant = Voximplant.getInstance()
 
-    const navigation = useNavigation()
+    useEffect(() => {
+      voximplant.on(Voximplant.ClientEvents.IncomingCall, (inComingCallEvent) => {
+        navigation.navigate('IncomingCall', {
+          call: inComingCallEvent.call
+        })
+      })
+      return () => {
+        voximplant.off(Voximplant.ClientEvents.IncomingCall)
+      }
+    }, [])
+
     useEffect(() =>{
         
             const newContacts = contactsData.filter(
@@ -17,7 +32,7 @@ const ContactScreen = () => {
     }, [searchText])
 
     const callUser = (user) => {
-      console.warn('user call')
+      // console.warn('user call')
       navigation.navigate('CallScreen', {user})
     }
   return (
